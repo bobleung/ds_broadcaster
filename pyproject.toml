@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ds-broadcaster"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Django app for real-time SSE broadcasting using the Datastar format. Requires Datastar on the frontend and an ASGI server (e.g. uvicorn)."
 requires-python = ">=3.12"
 dependencies = [
