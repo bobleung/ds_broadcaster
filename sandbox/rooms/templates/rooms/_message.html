@@ -4,7 +4,7 @@
      data-class:chat-end="$current_user_id == {{ msg.author.pk }}"
      data-class:chat-start="$current_user_id != {{ msg.author.pk }}">
     <div class="chat-image avatar avatar-placeholder">
-        <div class="w-10 rounded-full bg-neutral text-neutral-content">
+        <div class="w-10 rounded-full" style="background-color: {% firstof colour colours|lookup:msg.author.pk %}; color: #fff">
             <span class="text-sm">{{ msg.author|initials }}</span>
         </div>
     </div>

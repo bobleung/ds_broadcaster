@@ -1,5 +1,5 @@
 <div id="chat-feed" class="flex flex-col gap-1 overflow-y-auto h-96 p-2 bg-base-100 rounded-box border border-base-300">
     {% for msg in chat_messages %}
-        {% include 'rooms/_message.html' with msg=msg current_user=current_user %}
+        {% include 'rooms/_message.html' with msg=msg %}
     {% endfor %}
 </div>

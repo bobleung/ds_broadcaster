@@ -10,22 +10,43 @@ from .forms import RoomForm, RoomMemberForm
 from ds_broadcaster import broadcast
 from ds_broadcaster.formatting import format_patch_signals
 
+PALETTE = [
+    "#b91c1c",  # red-700
+    "#0369a1",  # sky-700
+    "#a16207",  # yellow-700
+    "#6d28d9",  # violet-700
+    "#134e4a",  # teal-900
+    "#be123c",  # rose-700
+    "#4d7c0f",  # lime-700
+    "#7c2d12",  # orange-900
+    "#556b2f",  # olive-600
+    "#1a2e05",  # olive-950
+]
+
+
+def _member_colours(members):
+    """Return a dict mapping user_id -> colour for a list of members."""
+    return {u.pk: PALETTE[i % len(PALETTE)] for i, u in enumerate(members)}
+
 
 def _room_presence(channel, online_ids):
     room_pk = channel.removeprefix("room-")
     room = Room.objects.get(pk=room_pk)
     online_set = set(online_ids)
     all_members = list(room.members.all())
+    colours = _member_colours(all_members)
     online = [u for u in all_members if u.pk in online_set]
     offline = [u for u in all_members if u.pk not in online_set]
     users = (
-        [{"user": u, "online": True} for u in online] +
-        [{"user": u, "online": False} for u in offline]
+        [{"user": u, "online": True, "colour": colours[u.pk]} for u in online] +
+        [{"user": u, "online": False, "colour": colours[u.pk]} for u in offline]
     )
     cursor_signals = {f'cursor_{u.pk}_active': False for u in offline}
     if cursor_signals:
         broadcast.signals(channel, cursor_signals)
-    return render_to_string("rooms/_members.html", {"users": users})
+    html = render_to_string("rooms/_members.html", {"users": users})
+    colour_signals = {f'user_{uid}_colour': colour for uid, colour in colours.items()}
+    return (html, colour_signals)
 
 
 @login_required
@@ -38,7 +59,8 @@ def room_list(request):
 def room_detail(request, pk):
     room = get_object_or_404(Room, pk=pk, members=request.user)
     room_members = list(room.members.all())
-    members = [{"user": u, "online": False} for u in room_members]
+    colours = _member_colours(room_members)
+    members = [{"user": u, "online": False, "colour": colours[u.pk]} for u in room_members]
     chat_messages = room.messages.select_related('author').all()
     return render(request, 'rooms/room_detail.html', {
         'room': room,
@@ -46,6 +68,7 @@ def room_detail(request, pk):
         'members': members,
         'room_members': room_members,
         'chat_messages': chat_messages,
+        'colours': colours,
     })
 
 
@@ -124,7 +147,12 @@ def room_send_message(request, pk):
         body = ''
     if body:
         msg = Message.objects.create(room=room, author=request.user, body=body)
-        html = render_to_string('rooms/_message.html', {'msg': msg})
+        room_members = list(room.members.all())
+        colours = _member_colours(room_members)
+        html = render_to_string('rooms/_message.html', {
+            'msg': msg,
+            'colour': colours.get(msg.author.pk, PALETTE[0]),
+        })
         broadcast(f'room-{room.pk}', html, selector='#chat-feed', mode='append')
 
     async def stream():

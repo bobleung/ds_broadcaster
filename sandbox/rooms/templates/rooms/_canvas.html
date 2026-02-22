@@ -2,7 +2,7 @@
 {% url 'room_cursor' room.pk as cursor_url %}
 
 {% for member in room_members %}{% if member.pk != user_id %}
-<div data-signals="{cursor_{{ member.pk }}_x: 0, cursor_{{ member.pk }}_y: 0, cursor_{{ member.pk }}_active: false}"></div>
+<div data-signals="{cursor_{{ member.pk }}_x: 0, cursor_{{ member.pk }}_y: 0, cursor_{{ member.pk }}_active: false, user_{{ member.pk }}_colour: '{{ colours|lookup:member.pk }}'}"></div>
 {% endif %}{% endfor %}
 
 <div id="canvas_container"
@@ -15,13 +15,13 @@
          data-show="$cursor_{{ member.pk }}_active"
          data-style:left="$cursor_{{ member.pk }}_x + 'px'"
          data-style:top="$cursor_{{ member.pk }}_y + 'px'"
-         class="absolute pointer-events-none flex flex-col items-center -translate-x-1/2 -translate-y-1/2 transition-[left,top] duration-100 ease-linear"
-         style="color: {{ member|cursor_colour }}">
+         data-style:color="$user_{{ member.pk }}_colour"
+         class="absolute pointer-events-none flex flex-col items-center -translate-x-1/2 -translate-y-1/2 transition-[left,top] duration-100 ease-linear">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M0 0 L0 12 L3.5 9 L6.5 15 L8.5 14 L5.5 8 L10 8 Z"/>
         </svg>
         <span class="text-xs font-semibold leading-none mt-0.5 bg-white/80 rounded px-1"
-              style="color: {{ member|cursor_colour }}">{{ member.first_name|default:member.email }}</span>
+              data-style:color="$user_{{ member.pk }}_colour">{{ member.first_name|default:member.email }}</span>
     </div>
     {% endif %}
     {% endfor %}

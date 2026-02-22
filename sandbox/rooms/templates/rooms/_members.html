@@ -2,8 +2,8 @@
 {% if users|length > 5 %}
 <div id="room-members" class="avatar-group -space-x-4">
     {% for item in users|slice:":5" %}
-    <div class="avatar avatar-online avatar-placeholder {% if not item.online %}opacity-40{% endif %}">
-        <div class="w-10 rounded-full bg-neutral text-neutral-content">
+    <div class="avatar {% if item.online %}avatar-online{% endif %} avatar-placeholder {% if not item.online %}opacity-30{% endif %}">
+        <div class="{% if item.online %}w-10{% else %}w-7{% endif %} rounded-full" style="background-color: {{ item.colour }}; color: #fff">
             <span class="text-sm">{{ item.user|initials }}</span>
         </div>
     </div>
@@ -15,10 +15,10 @@
     </div>
 </div>
 {% else %}
-<div id="room-members" class="flex gap-2">
+<div id="room-members" class="flex gap-2 items-center">
     {% for item in users %}
-    <div class="avatar avatar-online avatar-placeholder {% if not item.online %}opacity-40{% endif %}">
-        <div class="w-10 rounded-full bg-neutral text-neutral-content">
+    <div class="avatar {% if item.online %}avatar-online{% endif %} avatar-placeholder {% if not item.online %}opacity-30{% endif %}">
+        <div class="{% if item.online %}w-10{% else %}w-7{% endif %} rounded-full" style="background-color: {{ item.colour }}; color: #fff">
             <span class="text-sm">{{ item.user|initials }}</span>
         </div>
     </div>
