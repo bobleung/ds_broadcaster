@@ -2,7 +2,7 @@
 
 A Django app for broadcasting Server-Sent Events (SSE) to connected clients via [Datastar](https://data-star.dev). Supports presence tracking, force-disconnect, and channel management.
 
-Requires an ASGI server (e.g. uvicorn). Does not support WSGI.
+Requires an ASGI server (e.g. uvicorn) running a **single worker process**. Does not support WSGI.
 
 ---
 
@@ -181,6 +181,7 @@ DS_BROADCASTER_HEARTBEAT_INTERVAL = 15
 
 ## Architecture notes
 
+- **Single worker required.** The channel registry is stored in-process memory. Running multiple workers (e.g. `uvicorn --workers 2`) means each worker has its own isolated registry, so broadcasts in one worker won't reach clients connected to another. Always run with a single worker (`--workers 1`, which is uvicorn's default). Sync views are still handled concurrently via the thread pool — a single async worker does not mean single-threaded.
 - Each SSE connection gets its own `asyncio.Queue`. Events are pushed into queues from any thread using `call_soon_threadsafe`.
 - The registry (`ChannelRegistry`) is a thread-safe in-memory store of channels, queues, and user IDs. It does not persist across server restarts.
 - Presence callbacks run in a Django thread pool (via `sync_to_async`) so they never block the async event loop.
