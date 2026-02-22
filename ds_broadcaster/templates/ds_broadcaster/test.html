@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Broadcaster Test | {% endblock %}
+
+{% block content %}
+<div class="p-8 max-w-4xl">
+    <h1 class="text-2xl font-bold mb-6">ds_broadcaster test</h1>
+    <p class="text-sm text-gray-500 mb-6">Logged in as: <strong>{{ user.username }}</strong></p>
+
+    <!-- Channel input -->
+    <div class="form-control mb-6">
+        <label class="label"><span class="label-text font-semibold">Channel name</span></label>
+        <input type="text"
+               class="input input-bordered w-64"
+               data-bind="channel_name"
+               value="test-channel"
+               placeholder="e.g. test-channel" />
+    </div>
+
+    <!-- API actions -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Channel management</h2>
+        <div class="flex gap-2 flex-wrap">
+            <button class="btn btn-sm"
+                    data-on:click="@post('/events/test/api/new/', {headers: {'X-CSRFToken': '{{ csrf_token }}'}})">
+                broadcast.new
+            </button>
+            <button class="btn btn-sm btn-error"
+                    data-on:click="@post('/events/test/api/kill/', {headers: {'X-CSRFToken': '{{ csrf_token }}'}})">
+                broadcast.kill
+            </button>
+            <button class="btn btn-sm btn-info"
+                    data-on:click="@get('/events/test/api/status/')">
+                Refresh status
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Send events</h2>
+        <div class="flex gap-2 flex-wrap">
+            <button class="btn btn-sm btn-primary"
+                    data-on:click="@post('/events/test/api/send-elements/', {headers: {'X-CSRFToken': '{{ csrf_token }}'}})">
+                broadcast (elements)
+            </button>
+            <button class="btn btn-sm btn-secondary"
+                    data-on:click="@post('/events/test/api/send-signals/', {headers: {'X-CSRFToken': '{{ csrf_token }}'}})">
+                broadcast.signals
+            </button>
+        </div>
+    </div>
+
+    <!-- SSE listener -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">SSE listener</h2>
+        <p class="text-sm text-gray-500 mb-2">
+            Connect to a channel to receive events. The connection uses
+            the channel name above.
+        </p>
+        <button class="btn btn-sm btn-accent"
+                data-on:click="@get('/events/test/sse/' + $channel_name + '/')">
+            Connect to channel
+        </button>
+    </div>
+
+    <!-- Presence -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Presence</h2>
+        <div id="presence" class="bg-base-200 p-4 rounded min-h-12">
+            <p class="text-gray-400 text-sm">Connect to a channel to see presence</p>
+        </div>
+    </div>
+
+    <!-- Registry status -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Registry status</h2>
+        <div id="registry_status" class="bg-base-200 p-4 rounded font-mono text-sm">
+            <p class="text-gray-400">Click "Refresh status" to see channel state</p>
+        </div>
+    </div>
+
+    <!-- Elements target -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Elements target</h2>
+        <div id="broadcast_target" class="space-y-2 bg-base-200 p-4 rounded min-h-16">
+        </div>
+    </div>
+
+    <!-- Signals display -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Signals</h2>
+        <pre class="bg-base-200 p-4 rounded text-sm"
+             data-text="JSON.stringify($signals, null, 2)"></pre>
+    </div>
+
+    <!-- Event log -->
+    <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Event log</h2>
+        <div id="event_log" class="bg-base-200 p-4 rounded font-mono text-xs space-y-1 max-h-64 overflow-y-auto">
+        </div>
+    </div>
+</div>
+{% endblock %}

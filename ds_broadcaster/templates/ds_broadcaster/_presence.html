@@ -1,0 +1,11 @@
+{% load ds_broadcaster_tags %}
+<div id="presence" class="flex gap-1">
+    {% for user in users %}
+    <div class="tooltip" data-tip="{{ user.email|default:'anonymous' }}">
+        <div class="w-8 h-8 rounded-full bg-primary text-primary-content
+                    flex items-center justify-center text-xs font-bold">
+            {{ user.email|initials }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
