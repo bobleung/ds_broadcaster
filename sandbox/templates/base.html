@@ -3,15 +3,32 @@
 <head>
     <title>{% block title %}{% endblock %}ds-broadcaster sandbox</title>
     {% load static %}
-    <!-- Tailwind CSS (CDN) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- DaisyUI (CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- DaisyUI v5 + Tailwind v4 (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+    @theme {
+        --color-base-100: var(--fallback-b1);
+        --color-base-200: var(--fallback-b2);
+        --color-base-300: var(--fallback-b3);
+        --color-base-content: var(--fallback-bc);
+    }
+    h1 {
+        @apply text-3xl font-bold my-10 text-center;
+    }
+    .autodismiss {
+        animation: dismiss 0.5s ease-in 3s forwards;
+    }
+    @keyframes dismiss {
+        to { opacity: 0; display: none; }
+    }
+    </style>
     <!-- Datastar -->
     <script type="module" src="{% static 'js/datastar-pro.js' %}"></script>
     <script type="module" src="{% static 'js/datastar-inspector.js' %}"></script>
 </head>
-<body>
+<body data-theme="cupcake">
     <nav class="navbar bg-base-300 shadow-sm">
         <div class="navbar-start ml-4">
             <a class="text-xl font-bold" href="{% url 'home' %}">ds-broadcaster sandbox</a>
@@ -49,12 +66,4 @@
 
 <!-- class="alert-success alert-error alert-warning alert-info" -->
 
-<style>
-.autodismiss {
-    animation: dismiss 0.5s ease-in 3s forwards;
-}
-@keyframes dismiss {
-    to { opacity: 0; display: none; }
-}
-</style>
 </html>

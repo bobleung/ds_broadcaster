@@ -2,12 +2,12 @@ from django import template
 
 register = template.Library()
 
-CURSOR_COLOURS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#06b6d4", "#3b82f6", "#a855f7", "#ec4899"]
-
-
 @register.filter
-def cursor_colour(user):
-    return CURSOR_COLOURS[user.pk % len(CURSOR_COLOURS)]
+def lookup(d, key):
+    """Look up a key in a dict. Usage: {{ colours|lookup:user.pk }}"""
+    if isinstance(d, dict):
+        return d.get(key, "")
+    return ""
 
 
 @register.filter

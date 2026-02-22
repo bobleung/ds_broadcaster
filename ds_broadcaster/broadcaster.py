@@ -194,7 +194,14 @@ class Broadcaster:
             self._broadcast_presence(channel)
 
     def _broadcast_presence(self, channel):
-        """Broadcast the current presence list to all users on the channel."""
+        """Broadcast the current presence list to all users on the channel.
+
+        The presence callback may return:
+        - str: HTML only (broadcast as datastar-patch-elements)
+        - dict: signals only (broadcast as datastar-patch-signals)
+        - (str, dict): HTML + signals (both broadcast)
+        - (None, dict): signals only (tuple form)
+        """
         config = registry.get_config(channel)
         callback = config.get("presence_callback")
         if callback is None:
@@ -203,6 +210,19 @@ class Broadcaster:
         user_ids = registry.get_users(channel)
         # Deduplicate (same user, multiple tabs)
         unique_ids = list(dict.fromkeys(user_ids))
+
+        def _dispatch(result):
+            if isinstance(result, tuple):
+                html, signals = result
+            elif isinstance(result, dict):
+                html, signals = None, result
+            else:
+                html, signals = result, None
+
+            if html:
+                self._put(channel, format_patch_elements(html))
+            if signals:
+                self._put(channel, format_patch_signals(signals))
 
         # _broadcast_presence is called from _add_user/_remove_user which run
         # inside the async event loop (_connect is async). The callback may do
@@ -216,14 +236,12 @@ class Broadcaster:
         if loop is not None:
             from asgiref.sync import sync_to_async
             async def _run():
-                html = await sync_to_async(callback)(channel, unique_ids)
-                event = format_patch_elements(html)
-                self._put(channel, event)
+                result = await sync_to_async(callback)(channel, unique_ids)
+                _dispatch(result)
             loop.create_task(_run())
         else:
-            html = callback(channel, unique_ids)
-            event = format_patch_elements(html)
-            self._put(channel, event)
+            result = callback(channel, unique_ids)
+            _dispatch(result)
 
     def _put(self, channel, event):
         """Push an event to all user queues on a channel.
