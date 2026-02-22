@@ -1,0 +1,8 @@
+[tools]
+python = "3.12"
+
+[tasks.dev]
+depends = ["server"]
+
+[tasks.server]
+run = "cd sandbox && uv run uvicorn sandbox.asgi:application --reload --reload-include '*.html' --timeout-graceful-shutdown 1"

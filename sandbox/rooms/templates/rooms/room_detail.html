@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ room.name }} | {% endblock %}
+
+{% block content %}
+
+<h1>{{ room.name }}</h1>
+
+{% url 'room_connect' room.pk as connect_url %}
+<div data-signals="{current_user_id: {{ user_id }}}" data-init="@get('{{ connect_url }}')"></div>
+
+{% url 'room_send_message' room.pk as send_url %}
+
+<div class="flex flex-col items-center gap-4">
+    <div class="flex gap-2">
+        <a class="btn btn-neutral" href="{% url 'room_edit' room.pk %}">Edit Room</a>
+        <a class="btn btn-secondary" href="{% url 'room_list' %}">Back to Rooms</a>
+    </div>
+
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4">
+        <legend class="fieldset-legend">Currently in room</legend>
+        {% include 'rooms/_members.html' with users=members %}
+    </fieldset>
+
+    <div class="w-full max-w-2xl" data-signals="{message_to_send: '', active_tab: 'chat'}">
+        <div role="tablist" class="tabs tabs-border">
+            <a role="tab" class="tab"
+               data-class:tab-active="$active_tab == 'chat'"
+               data-on:click="$active_tab = 'chat'">Chat</a>
+            <a role="tab" class="tab"
+               data-class:tab-active="$active_tab == 'canvas'"
+               data-on:click="$active_tab = 'canvas'">Canvas</a>
+        </div>
+
+        <div data-show="$active_tab == 'chat'" class="flex flex-col gap-2 pt-2">
+            {% include 'rooms/_chat.html' %}
+            <div class="flex gap-2">
+                <textarea
+                    data-bind="message_to_send"
+                    class="textarea textarea-bordered flex-1"
+                    placeholder="Type a message…"
+                    rows="1"
+                ></textarea>
+                <button class="btn btn-primary"
+                    data-on:click="@post('{{ send_url }}', {headers: {'X-CSRFToken': '{{ csrf_token }}'}})">Send</button>
+            </div>
+        </div>
+
+        <div data-show="$active_tab == 'canvas'" class="pt-2">
+            {% include 'rooms/_canvas.html' with room_members=room_members user_id=user_id %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

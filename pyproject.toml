@@ -11,5 +11,14 @@ dependencies = [
     "django>=4.2",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "uvicorn[standard]",
+    "whitenoise",
+]
+
+[tool.setuptools.packages.find]
+include = ["ds_broadcaster*"]
+
 [project.urls]
-Repository = "https://github.com/youruser/ds-broadcaster"
+Repository = "https://github.com/bobleung/ds_broadcaster"

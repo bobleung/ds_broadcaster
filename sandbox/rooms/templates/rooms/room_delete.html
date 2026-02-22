@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ room.name }} | {% endblock %}
+
+{% block content %}
+
+<h1>Delete Room</h1>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto">
+    <legend class="fieldset-legend">Confirm Deletion</legend>
+    <p class="mb-4">Are you sure you want to delete <strong>{{ room.name }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex gap-2">
+            <button class="btn btn-error flex-1" type="submit">Delete</button>
+            <a class="btn btn-secondary flex-1" href="{% url 'room_edit' room.pk %}">Cancel</a>
+        </div>
+    </form>
+</fieldset>
+
+{% endblock %}
