@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}ds-broadcaster sandbox</title>
+    {% load static %}
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- DaisyUI (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- Datastar -->
+    <script type="module" src="{% static 'js/datastar-pro.js' %}"></script>
+    <script type="module" src="{% static 'js/datastar-inspector.js' %}"></script>
+</head>
+<body>
+    <nav class="navbar bg-base-300 shadow-sm">
+        <div class="navbar-start ml-4">
+            <a class="text-xl font-bold" href="{% url 'home' %}">ds-broadcaster sandbox</a>
+        </div>
+        <div class="navbar-end">
+            {% if user.is_authenticated %}
+                <a class="btn btn-ghost" href="{% url 'room_list' %}">Rooms</a>
+                <a class="btn btn-ghost" href="{% url 'profile' %}">{{ user.username }}</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-ghost">Logout</button>
+                </form>
+            {% else %}
+                <a class="btn btn-ghost" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-ghost" href="{% url 'signup' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% for message in messages %}
+    <div class="toast toast-top toast-center autodismiss">
+        <div class="alert alert-{{ message.tags }}">
+            <span>{{ message }}</span>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="p-6">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+
+<datastar-inspector></datastar-inspector>
+
+<!-- class="alert-success alert-error alert-warning alert-info" -->
+
+<style>
+.autodismiss {
+    animation: dismiss 0.5s ease-in 3s forwards;
+}
+@keyframes dismiss {
+    to { opacity: 0; display: none; }
+}
+</style>
+</html>

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile | {% endblock %}
+
+{% block content %}
+
+<h1>Profile</h1>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto">
+    <legend class="fieldset-legend">Profile Information</legend>
+    <form method="post" action="{% url 'profile' %}">
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                <ul>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <fieldset class="fieldset">
+            <input type="text" class="input validator w-full" placeholder="Username" name="username"
+                value="{{ form.username.value|default:'' }}"
+                data-init="$_username_error = '{{ form.username.errors|join:", "|escapejs }}'"
+                data-on:input="$_username_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_username_error" data-class:hidden="$_username_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <fieldset class="fieldset">
+            <input type="email" class="input validator w-full" placeholder="Email" name="email"
+                value="{{ form.email.value|default:'' }}"
+                data-init="$_email_error = '{{ form.email.errors|join:", "|escapejs }}'"
+                data-on:input="$_email_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_email_error" data-class:hidden="$_email_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <fieldset class="fieldset">
+            <input type="text" class="input w-full" placeholder="First Name" name="first_name"
+                value="{{ form.first_name.value|default:'' }}" />
+        </fieldset>
+
+        <fieldset class="fieldset">
+            <input type="text" class="input w-full" placeholder="Last Name" name="last_name"
+                value="{{ form.last_name.value|default:'' }}" />
+        </fieldset>
+
+        <button class="btn btn-neutral mt-4 w-full" type="submit">Update</button>
+    </form>
+</fieldset>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto mt-4">
+    <legend class="fieldset-legend">Change Password</legend>
+    <form method="post" action="{% url 'change_password' %}">
+        {% csrf_token %}
+
+        <fieldset class="fieldset">
+            <input type="password" class="input validator w-full" placeholder="Current Password" name="current_password"
+                data-init="$_current_password_error = '{{ password_form.current_password.errors|join:", "|escapejs }}'"
+                data-on:input="$_current_password_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_current_password_error" data-class:hidden="$_current_password_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <fieldset class="fieldset">
+            <input type="password" class="input validator w-full" placeholder="New Password" name="new_password"
+                data-init="$_new_password_error = '{{ password_form.new_password.errors|join:", "|escapejs }}'"
+                data-on:input="$_new_password_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_new_password_error" data-class:hidden="$_new_password_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <button class="btn btn-neutral mt-4 w-full" type="submit">Change Password</button>
+    </form>
+</fieldset>
+
+
+{% endblock %}

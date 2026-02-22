@@ -1,0 +1,27 @@
+{% load rooms_tags %}
+{% if users|length > 5 %}
+<div id="room-members" class="avatar-group -space-x-4">
+    {% for item in users|slice:":5" %}
+    <div class="avatar avatar-online avatar-placeholder {% if not item.online %}opacity-40{% endif %}">
+        <div class="w-10 rounded-full bg-neutral text-neutral-content">
+            <span class="text-sm">{{ item.user|initials }}</span>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="avatar avatar-placeholder">
+        <div class="w-10 rounded-full bg-base-300 text-base-content">
+            <span class="text-sm">+{{ users|length|add:"-5" }}</span>
+        </div>
+    </div>
+</div>
+{% else %}
+<div id="room-members" class="flex gap-2">
+    {% for item in users %}
+    <div class="avatar avatar-online avatar-placeholder {% if not item.online %}opacity-40{% endif %}">
+        <div class="w-10 rounded-full bg-neutral text-neutral-content">
+            <span class="text-sm">{{ item.user|initials }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

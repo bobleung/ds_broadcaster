@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ room.name }} | {% endblock %}
+
+{% block content %}
+
+<h1>Edit Room</h1>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto">
+    <legend class="fieldset-legend">Room Name</legend>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_name" />
+
+        <fieldset class="fieldset">
+            <input type="text" class="input validator w-full" placeholder="Room name" name="name"
+                value="{{ form.name.value|default:'' }}"
+                data-init="$_name_error = '{{ form.name.errors|join:", "|escapejs }}'"
+                data-on:input="$_name_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_name_error" data-class:hidden="$_name_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <button class="btn btn-neutral mt-4 w-full" type="submit">Update Name</button>
+    </form>
+</fieldset>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto mt-4">
+    <legend class="fieldset-legend">Add Member</legend>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_member" />
+
+        <fieldset class="fieldset">
+            <input type="email" class="input validator w-full" placeholder="Email address" name="email"
+                value="{{ member_form.email.value|default:'' }}"
+                data-init="$_email_error = '{{ member_form.email.errors|join:", "|escapejs }}'"
+                data-on:input="$_email_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_email_error" data-class:hidden="$_email_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <button class="btn btn-neutral mt-4 w-full" type="submit">Add Member</button>
+    </form>
+</fieldset>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto mt-4">
+    <legend class="fieldset-legend">Current Members</legend>
+    <ul class="flex flex-col gap-2">
+        {% for member in room.members.all %}
+            <li class="flex justify-between items-center">
+                <span>{{ member.email }}</span>
+                {% if member != request.user %}
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="remove_member" />
+                        <input type="hidden" name="user_id" value="{{ member.pk }}" />
+                        <button class="btn btn-error btn-xs" type="submit">Remove</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</fieldset>
+
+<div class="flex justify-center gap-2 mt-4">
+    <a class="btn btn-secondary" href="{% url 'room_detail' room.pk %}">Back to Room</a>
+    <a class="btn btn-error" href="{% url 'room_delete' room.pk %}">Delete Room</a>
+</div>
+
+{% endblock %}

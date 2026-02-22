@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Room | {% endblock %}
+
+{% block content %}
+
+<h1>Create Room</h1>
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4 mx-auto">
+    <legend class="fieldset-legend">New Room</legend>
+    <form method="post">
+        {% csrf_token %}
+
+        <fieldset class="fieldset">
+            <input type="text" class="input validator w-full" placeholder="Room name" name="name"
+                value="{{ form.name.value|default:'' }}"
+                data-init="$_name_error = '{{ form.name.errors|join:", "|escapejs }}'"
+                data-on:input="$_name_error = ''"
+                required />
+            <div class="text-error text-xs" data-text="$_name_error" data-class:hidden="$_name_error === ''"></div>
+            <span class="validator-hint hidden">Required</span>
+        </fieldset>
+
+        <button class="btn btn-neutral mt-4 w-full" type="submit">Create</button>
+    </form>
+</fieldset>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Toast Test - {% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center gap-4 mt-10">
+    <h1>Toast Auto-Dismiss Test</h1>
+
+    <div id="toast-area" class="toast toast-top toast-center items-center"></div>
+
+    <button class="btn btn-primary"
+            data-on:click="@get('{% url 'toast_test_sse' %}')">
+        Trigger Toast via SSE
+    </button>
+
+    <button class="btn btn-secondary"
+            data-on:click="@get('{% url 'toast_test_html' %}')">
+        Trigger Toast via HTML
+    </button>
+</div>
+{% endblock %}

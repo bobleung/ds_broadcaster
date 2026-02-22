@@ -1,0 +1,16 @@
+{% load rooms_tags %}
+<div class="chat"
+     data-scroll-into-view__smooth__vend
+     data-class:chat-end="$current_user_id == {{ msg.author.pk }}"
+     data-class:chat-start="$current_user_id != {{ msg.author.pk }}">
+    <div class="chat-image avatar avatar-placeholder">
+        <div class="w-10 rounded-full bg-neutral text-neutral-content">
+            <span class="text-sm">{{ msg.author|initials }}</span>
+        </div>
+    </div>
+    <div class="chat-header">
+        {{ msg.author.get_full_name|default:msg.author.email }}
+        <time class="text-xs opacity-50">{{ msg.created_at|time:"H:i" }}</time>
+    </div>
+    <div class="chat-bubble">{{ msg.body }}</div>
+</div>

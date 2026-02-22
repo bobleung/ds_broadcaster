@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Rooms | {% endblock %}
+
+{% block content %}
+
+<h1>My Rooms</h1>
+
+<div class="flex flex-col items-center gap-4">
+    <a class="btn btn-primary" href="{% url 'room_create' %}">Create Room</a>
+
+    {% if rooms %}
+        <div class="w-sm flex flex-col gap-2">
+            {% for room in rooms %}
+                <a href="{% url 'room_detail' room.pk %}" class="btn btn-ghost bg-base-200 justify-between">
+                    {{ room.name }}
+                    <span class="badge badge-neutral">{{ room.members.count }} members</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-base-content/50">You haven't joined any rooms yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

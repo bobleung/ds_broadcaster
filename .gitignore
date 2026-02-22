@@ -3,3 +3,6 @@ __pycache__/
 dist/
 build/
 *.pyc
+sandbox/db.sqlite3
+sandbox/staticfiles/
+.venv/

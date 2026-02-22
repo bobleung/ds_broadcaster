@@ -1,0 +1,33 @@
+{% load rooms_tags static %}
+{% url 'room_cursor' room.pk as cursor_url %}
+
+{% for member in room_members %}{% if member.pk != user_id %}
+<div data-signals="{cursor_{{ member.pk }}_x: 0, cursor_{{ member.pk }}_y: 0, cursor_{{ member.pk }}_active: false}"></div>
+{% endif %}{% endfor %}
+
+<div id="canvas_container"
+     class="relative bg-base-200 border border-base-300 rounded-box h-96 overflow-hidden cursor-crosshair">
+    <canvas id="drawing_canvas" class="absolute inset-0 w-full h-full"></canvas>
+
+    {% for member in room_members %}
+    {% if member.pk != user_id %}
+    <div id="cursor_{{ member.pk }}"
+         data-show="$cursor_{{ member.pk }}_active"
+         data-style:left="$cursor_{{ member.pk }}_x + 'px'"
+         data-style:top="$cursor_{{ member.pk }}_y + 'px'"
+         class="absolute pointer-events-none flex flex-col items-center -translate-x-1/2 -translate-y-1/2 transition-[left,top] duration-100 ease-linear"
+         style="color: {{ member|cursor_colour }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M0 0 L0 12 L3.5 9 L6.5 15 L8.5 14 L5.5 8 L10 8 Z"/>
+        </svg>
+        <span class="text-xs font-semibold leading-none mt-0.5 bg-white/80 rounded px-1"
+              style="color: {{ member|cursor_colour }}">{{ member.first_name|default:member.email }}</span>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<script src="{% static 'js/canvas_app.js' %}"></script>
+<script>
+    initCanvas('{{ cursor_url }}', '{{ csrf_token }}');
+</script>

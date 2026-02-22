@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | {% endblock %}
+
+{% block content %}
+
+<h1>Login</h1>
+
+<form method="post" action="{% url 'login' %}" class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 mx-auto">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            <ul>
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <fieldset class="fieldset">
+        <input type="email" class="input validator" placeholder="Email" name="username" value="{{ form.username.value|default:'' }}" required />
+        <div class="text-error text-xs">{{ form.username.errors }}</div>
+        <p class="validator-hint hidden">Required</p>
+    </fieldset>
+
+    <fieldset class="fieldset">
+        <input type="password" class="input validator" placeholder="Password" name="password" required />
+        <div class="text-error text-xs">{{ form.password.errors }}</div>
+        <span class="validator-hint hidden">Required</span>
+    </fieldset>
+
+    <button class="btn btn-neutral mt-4" type="submit">Login</button>
+</form>
+
+
+{% endblock %}
