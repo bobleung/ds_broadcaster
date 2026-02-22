@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2] - 2026-02-22
+
+### Changed
+- Documented single worker process requirement in README
+
 ## [0.2.0] - 2026-02-22
 
 ### Added
